@@ -1,0 +1,16 @@
+# OpenAI & LLM
+openai>=1.30.0
+python-dotenv>=1.0.0
+langchain>=0.2.0
+langchain-openai>=0.1.0
+langgraph>=0.1.0
+
+# Web UI
+streamlit>=1.35.0
+
+# HTTP & API Requests
+requests>=2.31.0
+duckduckgo-search>=6.0.0
+
+# Data & Visualization
+pandas>=2.0.0

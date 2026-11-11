@@ -1,0 +1,23 @@
+# 환경변수 및 비밀 키 (절대 GitHub에 올리지 않음)
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# 개인 대화 기록
+chat_history/
+
+# Python 캐시 및 가상환경
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# OS / 에디터 파일
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
