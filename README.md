@@ -16,7 +16,7 @@ OpenAI, LangGraph, Hot Pepper Gourmet API, DuckDuckGo 검색, 실시간 엔화 �
    ```env
    APP_PASSWORD=원하는비밀번호
    OPENAI_API_KEY=your_openai_api_key_here
-   OPENAI_MODEL=gpt-4o
+   OPENAI_MODEL=gpt-6-astra
    HOTPEPPER_API_KEY=your_hotpepper_api_key_here
    ```
 2. 패키지를 설치하고 실행합니다.
@@ -33,7 +33,7 @@ OpenAI, LangGraph, Hot Pepper Gourmet API, DuckDuckGo 검색, 실시간 엔화 �
    ```toml
    APP_PASSWORD = "원하는비밀번호"
    OPENAI_API_KEY = "your_openai_api_key_here"
-   OPENAI_MODEL = "gpt-4o"
+   OPENAI_MODEL = "gpt-6-astra"
    HOTPEPPER_API_KEY = "your_hotpepper_api_key_here"
    ```
 

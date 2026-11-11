@@ -28,9 +28,7 @@ except Exception:
 
 app_password = os.getenv("APP_PASSWORD")
 api_key = os.getenv("OPENAI_API_KEY")
-selected_model = os.getenv("OPENAI_MODEL", "gpt-4o")
-if "gpt-6" in selected_model:
-    selected_model = "gpt-4o"
+selected_model = os.getenv("OPENAI_MODEL", "gpt-6-astra")
 hotpepper_api_key = os.getenv("HOTPEPPER_API_KEY")
 client = OpenAI(api_key=api_key) if api_key else None
 

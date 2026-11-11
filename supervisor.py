@@ -67,19 +67,19 @@ load_dotenv()
 
 api_key = os.getenv("OPENAI_API_KEY")
 hotpepper_api_key = os.getenv("HOTPEPPER_API_KEY")
-model_name = os.getenv("OPENAI_MODEL", "gpt-4o")
-# 만약 .env에 gpt-6-astra 같은 실험적 이름이 있으면 표준 gpt-4o 계열로 보정
-if "gpt-6" in model_name:
-    model_name = "gpt-4o"
+model_name = os.getenv("OPENAI_MODEL", "gpt-6-astra")
 
-llm = ChatOpenAI(model=model_name, openai_api_key=api_key, temperature=0.7)
-
-# 라우터 전용 LLM: 판단 속도 향상, 토큰 폭주 방지(max_tokens=200, temperature=0)
-router_llm = ChatOpenAI(
-    model="gpt-4o-mini" if "gpt-4" in model_name else model_name,
+llm = ChatOpenAI(
+    model=model_name,
     openai_api_key=api_key,
-    temperature=0,
-    max_tokens=200
+    extra_body={"reasoning_effort": "none"}
+)
+
+# 라우터 전용 LLM: gpt-6-astra 호환을 위해 temperature/max_tokens 제거 및 reasoning_effort="none" 적용
+router_llm = ChatOpenAI(
+    model=model_name,
+    openai_api_key=api_key,
+    extra_body={"reasoning_effort": "none"}
 )
 
 # ------------------------------------------------------------------
