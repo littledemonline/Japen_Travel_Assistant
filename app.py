@@ -513,19 +513,43 @@ if user_prompt:
                     
                     response_container.markdown(full_response)
                 else:
+                    if "gpt-6" in selected_model:
+                        extra_cfg = {"reasoning_effort": "low"}
+                    elif "gpt-5" in selected_model:
+                        extra_cfg = {"reasoning_effort": "none"}
+                    else:
+                        extra_cfg = None
+
                     # 1단계: 모델 호출 및 도구 필요 여부 확인 (Tool Calling)
-                    first_response = client.chat.completions.create(
-                        model=selected_model,
-                        messages=conversation_history,
-                        tools=TOOLS,
-                        tool_choice="auto",
-                        extra_body={"reasoning_effort": "none"}
-                    )
-                    
-                    resp_msg = first_response.choices[0].message
-                    
-                    # 도구 호출이 발생한 경우 (핫페퍼 맛집 검색 or 덕덕고 웹검색)
-                    if resp_msg.tool_calls:
+                    try:
+                        first_response = client.chat.completions.create(
+                            model=selected_model,
+                            messages=conversation_history,
+                            tools=TOOLS,
+                            tool_choice="auto",
+                            extra_body=extra_cfg
+                        )
+                        resp_msg = first_response.choices[0].message
+                    except Exception as tool_err:
+                        if "reasoning_effort" in str(tool_err) or "Function tools" in str(tool_err):
+                            resp_msg = None
+                        else:
+                            raise
+
+                    if resp_msg is None:
+                        # gpt-6 계열에서 /v1/chat/completions의 function tools 제한 시 스트리밍 직접 응답
+                        stream = client.chat.completions.create(
+                            model=selected_model,
+                            messages=conversation_history,
+                            stream=True,
+                            extra_body=extra_cfg
+                        )
+                        for chunk in stream:
+                            content = chunk.choices[0].delta.content or ""
+                            full_response += content
+                            response_container.markdown(full_response + "▌")
+                        response_container.markdown(full_response)
+                    elif resp_msg.tool_calls:
                         conversation_history.append(resp_msg)
                         
                         for tool_call in resp_msg.tool_calls:
@@ -548,7 +572,7 @@ if user_prompt:
                             model=selected_model,
                             messages=conversation_history,
                             stream=True,
-                            extra_body={"reasoning_effort": "none"}
+                            extra_body=extra_cfg
                         )
                         for chunk in stream:
                             content = chunk.choices[0].delta.content or ""

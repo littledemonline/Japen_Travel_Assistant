@@ -69,17 +69,24 @@ api_key = os.getenv("OPENAI_API_KEY")
 hotpepper_api_key = os.getenv("HOTPEPPER_API_KEY")
 model_name = os.getenv("OPENAI_MODEL", "gpt-6-astra")
 
+if "gpt-6" in model_name:
+    _extra_body = {"reasoning_effort": "low"}
+elif "gpt-5" in model_name:
+    _extra_body = {"reasoning_effort": "none"}
+else:
+    _extra_body = None
+
 llm = ChatOpenAI(
     model=model_name,
     openai_api_key=api_key,
-    extra_body={"reasoning_effort": "none"}
+    extra_body=_extra_body
 )
 
-# 라우터 전용 LLM: gpt-6-astra 호환을 위해 temperature/max_tokens 제거 및 reasoning_effort="none" 적용
+# 라우터 전용 LLM: gpt-6-astra 호환을 위해 reasoning_effort="low" 및 json_schema 사용
 router_llm = ChatOpenAI(
     model=model_name,
     openai_api_key=api_key,
-    extra_body={"reasoning_effort": "none"}
+    extra_body=_extra_body
 )
 
 # ------------------------------------------------------------------
@@ -184,7 +191,7 @@ def supervisor_node(state: TravelState):
 """
 
     messages = [SystemMessage(content=system_prompt)] + list(state["messages"])
-    router = router_llm.with_structured_output(SupervisorRouter)
+    router = router_llm.with_structured_output(SupervisorRouter, method="json_schema")
     decision = router.invoke(messages)
     
     status_text = f"👑 Supervisor 지휘: {decision.next} 호출 (사유: {decision.reason})"
